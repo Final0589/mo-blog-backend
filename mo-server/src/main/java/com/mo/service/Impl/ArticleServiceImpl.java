@@ -42,7 +42,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (tagIds != null && !tagIds.isEmpty()) {
             for (Integer tagId : tagIds) {
                 ArticleTag at = new ArticleTag();
-                at.setArticle_id(article.getCategoryId());
+                at.setArticle_id(article.getId());
                 at.setTag_id(tagId);
                 articleTagMapper.insert(at);
             }
@@ -71,6 +71,39 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         articleMapper.selectPage(page, queryWrapper);
 
         return new PageResult(page.getTotal(), page.getRecords());
+    }
+
+    /**
+     * 修改文章
+     * @param articleDTO
+     * @return
+     */
+    public void updateArticle(ArticleDTO articleDTO) {
+        // DTO复制属性
+        Article article = new Article();
+        BeanUtils.copyProperties(articleDTO, article);
+
+        articleMapper.updateById(article);
+    }
+
+    /**
+     * 批量删除文章
+     * @param ids
+     */
+    public void deleteBatch(List<Integer> ids) {
+        articleMapper.deleteByIds(ids);
+    }
+
+    /**
+     * 设置文章状态（1为公开 2为私人）
+     * @param articleId
+     * @param status
+     * @return
+     */
+    public void setStatus(Integer articleId, Integer status) {
+        Article article = articleMapper.selectById(articleId);
+        article.setStatus(status);
+        articleMapper.updateById(article);
     }
 
 }

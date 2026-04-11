@@ -6,15 +6,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
-@TableName("article")
-public class Article {
+@TableName("comment")
+public class Comment {
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private String title;
+    private Integer articleId;
+    private Integer userId;
+    private Integer parentId;
     private String content;
-    private String summary;
-    private Integer categoryId;
-    private Integer status;
-    private Integer view_count;
-    private String updateTime;
+    private String create_time;
 }

@@ -7,5 +7,4 @@ import com.mo.entity.Article;
 
 public interface ArticleMapper extends BaseMapper<Article> {
 
-
 }

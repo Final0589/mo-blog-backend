@@ -2,11 +2,9 @@ package com.mo.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.mo.entity.ArticleTag;
 import com.mo.entity.Tag;
 
 
-public interface ArticleTagMapper extends BaseMapper<ArticleTag> {
-
+public interface TagMapper extends BaseMapper<Tag> {
 
 }

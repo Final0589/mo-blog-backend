@@ -10,6 +10,7 @@ public class ArticleDTO {
     private String summary;
     private String content; // Markdown 源码
     private Integer categoryId;
-    private List<Integer> tagIds; // 你要求的标签 ID 数组
-    private Integer status; // 0-草稿, 1-发布
+    private List<Integer> tagIds; // 标签数组
+    private Integer view_count; // 阅读数，默认从0
+    private Integer status; // 0-公开, 1-私人
 }
