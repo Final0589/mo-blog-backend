@@ -106,4 +106,22 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         articleMapper.updateById(article);
     }
 
+    /**
+     * 根据ID获取文章
+     * @param id
+     * @return
+     */
+    public Article getById(Integer id) {
+        return articleMapper.selectById(id);
+    }
+
+    /**
+     * 文章阅读量统计
+     * @param articleId
+     * @return
+     */
+    public void click(Integer articleId) {
+        // TODO 文章阅读量统计
+    }
+
 }

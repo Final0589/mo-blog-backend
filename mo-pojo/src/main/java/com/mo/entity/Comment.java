@@ -14,5 +14,5 @@ public class Comment {
     private Integer userId;
     private Integer parentId;
     private String content;
-    private String create_time;
+    private String createTime;
 }

@@ -44,4 +44,18 @@ public interface ArticleService extends IService<Article> {
      * @return
      */
     void setStatus(Integer articleId, Integer status);
+
+    /**
+     * 根据ID获取文章
+     * @param id
+     * @return
+     */
+    Article getById(Integer id);
+
+    /**
+     * 文章阅读量统计
+     * @param articleId
+     * @return
+     */
+    void click(Integer articleId);
 }
