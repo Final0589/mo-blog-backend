@@ -1,5 +1,6 @@
 package com.mo.controller.admin;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.mo.result.Result;
 import com.mo.service.CommentService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import java.util.Collections;
 @RestController
 @RequestMapping("/admin/comment")
 @Slf4j
+@SaCheckRole("admin")
 public class CommentController {
 
     @Autowired

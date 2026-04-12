@@ -1,5 +1,6 @@
 package com.mo.controller.admin;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.mo.dto.ArticleDTO;
 import com.mo.dto.ArticlePageQueryDTO;
 import com.mo.result.PageResult;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/article")
 @Slf4j
+@SaCheckRole("admin")
 public class ArticleController {
 
     @Autowired

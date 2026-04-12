@@ -1,5 +1,6 @@
 package com.mo.controller.admin;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.mo.dto.TagDTO;
 import com.mo.dto.TagPageQueryDTO;
 import com.mo.result.PageResult;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/tag")
 @Slf4j
+@SaCheckRole("admin")
 public class TagController {
 
     @Autowired

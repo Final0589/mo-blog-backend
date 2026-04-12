@@ -1,5 +1,7 @@
 package com.mo.controller.user;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.mo.dto.CommentDTO;
 import com.mo.dto.CommentPageQueryDTO;
 import com.mo.result.PageResult;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/user/comment")
 @Slf4j
+@SaCheckLogin
 public class CommentController {
 
     @Autowired

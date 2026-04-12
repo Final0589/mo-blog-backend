@@ -13,4 +13,5 @@ public class User {
     private String avatar;
     private String createTime;
     private Integer permission;
+    private Integer email;
 }

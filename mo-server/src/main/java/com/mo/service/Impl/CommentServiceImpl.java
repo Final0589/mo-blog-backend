@@ -1,5 +1,6 @@
 package com.mo.service.Impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -26,6 +27,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     public void publishComment(CommentDTO commentDTO) {
         Comment comment = new Comment();
         BeanUtils.copyProperties(commentDTO, comment);
+        comment.setUserId((Integer) StpUtil.getLoginId());
 
         if (comment.getCreateTime() == null) {
             comment.setCreateTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
