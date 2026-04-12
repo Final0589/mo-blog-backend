@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController
+@RestController("adminUserController")
 @RequestMapping("/admin/user")
 @Slf4j
 public class UserController {
