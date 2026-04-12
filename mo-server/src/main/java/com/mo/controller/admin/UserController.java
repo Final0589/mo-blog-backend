@@ -6,7 +6,9 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.mo.dto.LoginDTO;
 import com.mo.dto.UserDTO;
+import com.mo.dto.UserPageQueryDTO;
 import com.mo.entity.User;
+import com.mo.result.PageResult;
 import com.mo.result.Result;
 import com.mo.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -82,6 +84,18 @@ public class UserController {
         log.info("删除账号中：{}", ids);
         userService.deleteBatch(ids);
         return Result.success();
+    }
+
+    /**
+     * 分页查询用户
+     * @param userPageQueryDTO
+     * @return
+     */
+    @GetMapping("/page")
+    @SaCheckRole("admin")
+    public Result<PageResult> page(UserPageQueryDTO userPageQueryDTO) {
+        PageResult pageResult = userService.pageQuery(userPageQueryDTO);
+        return Result.success(pageResult);
     }
 
 }

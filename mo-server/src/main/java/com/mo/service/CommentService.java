@@ -28,4 +28,5 @@ public interface CommentService extends IService<Comment> {
      * @param id
      */
     void delete(Integer id);
+
 }

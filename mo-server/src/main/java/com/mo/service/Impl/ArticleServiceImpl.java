@@ -121,7 +121,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
      * @return
      */
     public void click(Integer articleId) {
-        // TODO 文章阅读量统计
+        // TODO 存储到Redis缓存中，分别是今日阅读量和文章阅读量
     }
 
 }

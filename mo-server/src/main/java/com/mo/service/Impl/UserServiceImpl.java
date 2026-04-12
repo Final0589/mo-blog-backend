@@ -2,9 +2,12 @@ package com.mo.service.Impl;
 
 import cn.dev33.satoken.secure.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mo.dto.UserDTO;
+import com.mo.dto.UserPageQueryDTO;
 import com.mo.entity.User;
 import com.mo.mapper.UserMapper;
+import com.mo.result.PageResult;
 import com.mo.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +71,22 @@ public class UserServiceImpl implements UserService {
      */
     public void deleteBatch(List<Integer> ids) {
         userMapper.deleteBatchIds(ids);
+    }
+
+    /**
+     * 分页查询用户
+     * @param userPageQueryDTO
+     * @return
+     */
+    public PageResult pageQuery(UserPageQueryDTO userPageQueryDTO) {
+        Page<User> page = new Page<>(userPageQueryDTO.getPage(), userPageQueryDTO.getPageSize());
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(userPageQueryDTO.getName() != null, User::getName, userPageQueryDTO.getName());
+        queryWrapper.like(userPageQueryDTO.getNickname() != null, User::getNickname, userPageQueryDTO.getNickname());
+        queryWrapper.eq(userPageQueryDTO.getStatus() != null, User::getStatus, userPageQueryDTO.getStatus());
+        
+        userMapper.selectPage(page, queryWrapper);
+        return new PageResult(page.getTotal(), page.getRecords());
     }
 
 }

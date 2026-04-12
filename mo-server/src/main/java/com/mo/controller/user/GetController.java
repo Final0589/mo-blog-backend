@@ -78,6 +78,8 @@ public class GetController {
      */
     @PostMapping("/article/click/{articleId}")
     public Result viewCount(@PathVariable Integer articleId) {
+        // 将IP地址计入Redis缓存，并判断是否超过一定上限
+
         articleService.click(articleId);
         return Result.success();
     }

@@ -2,7 +2,9 @@ package com.mo.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.mo.dto.UserDTO;
+import com.mo.dto.UserPageQueryDTO;
 import com.mo.entity.User;
+import com.mo.result.PageResult;
 
 import java.util.List;
 
@@ -32,4 +34,11 @@ public interface UserService {
      * @param ids
      */
     void deleteBatch(List<Integer> ids);
+
+    /**
+     * 分页查询用户
+     * @param userPageQueryDTO
+     * @return
+     */
+    PageResult pageQuery(UserPageQueryDTO userPageQueryDTO);
 }

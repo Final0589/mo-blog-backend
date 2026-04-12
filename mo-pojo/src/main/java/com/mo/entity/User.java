@@ -14,4 +14,5 @@ public class User {
     private String createTime;
     private Integer permission;
     private Integer email;
+    private Integer status;
 }
