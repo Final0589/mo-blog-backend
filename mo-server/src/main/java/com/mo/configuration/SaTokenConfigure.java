@@ -16,7 +16,7 @@ public class SaTokenConfigure implements WebMvcConfigurer {
         registry.addInterceptor(new SaInterceptor(handle -> {
             // 登录校验 —— 拦截/admin路由
             SaRouter.match("/admin/**", r -> StpUtil.checkLogin());}))
-                .addPathPatterns("/**").excludePathPatterns("/user/login").excludePathPatterns("/admin/login"); // 开放登录接口
+                .addPathPatterns("/**").excludePathPatterns("/user/login").excludePathPatterns("/admin/user/login"); // 开放登录接口
     }
 
 }

@@ -2,8 +2,11 @@ package com.mo.controller.user;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.dev33.satoken.stp.StpUtil;
 import com.mo.dto.CommentDTO;
 import com.mo.dto.CommentPageQueryDTO;
+import com.mo.entity.Comment;
+import com.mo.mapper.CommentMapper;
 import com.mo.result.PageResult;
 import com.mo.result.Result;
 import com.mo.service.CommentService;
@@ -19,6 +22,8 @@ public class CommentController {
 
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private CommentMapper commentMapper;
 
     /**
      * 发表评论
@@ -58,6 +63,22 @@ public class CommentController {
 
         PageResult pageResult = commentService.pageQuery(commentPageQueryDTO);
         return Result.success(pageResult);
+    }
+
+    /**
+     * 删除自己发布的评论
+     * @return
+     */
+    @DeleteMapping("/delete/{commentId}")
+    public Result delete(@PathVariable Integer commentId) {
+        // 先查询该评论是否为当前用户发送，不是则无法删除
+        Comment comment = commentMapper.selectById(commentId);
+        if (StpUtil.getLoginId().equals(comment.getUserId())) {
+            commentService.delete(commentId);
+            return Result.success();
+        } else {
+            return Result.error("无法删除别人的评论");
+        }
     }
 
 }
