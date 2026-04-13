@@ -29,7 +29,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     private ArticleMapper articleMapper;
 
     @Autowired
-    private RedisTemplate<Object, Object> redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 上传文章
@@ -142,7 +142,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         }
 
         redisTemplate.opsForValue().increment("blog:today_view");
-        redisTemplate.opsForHash().increment("blog:article_view", articleId, 1);
+        redisTemplate.opsForHash().increment("blog:article_view", articleId.toString(), 1);
     }
 
 }

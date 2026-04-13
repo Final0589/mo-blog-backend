@@ -27,6 +27,11 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    /**
+     * 登录账号
+     * @param loginDTO
+     * @return
+     */
     @RequestMapping("/login")
     public Result login(LoginDTO loginDTO) {
         // 查询用户

@@ -29,8 +29,9 @@ public class GetController {
 
     @Autowired
     private TagService tagService;
+
     @Autowired
-    private RedisTemplate<Object, Object> redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 获取文章分类列表（分页）

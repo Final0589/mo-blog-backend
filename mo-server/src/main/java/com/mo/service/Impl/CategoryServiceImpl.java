@@ -27,12 +27,21 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     @Autowired
     private ArticleMapper articleMapper;
 
+    /**
+     * 创建分类
+     * @param categoryDTO
+     */
     public void createCategory(CategoryDTO categoryDTO) {
         Category category = new Category();
         BeanUtils.copyProperties(categoryDTO, category);
         this.save(category);
     }
 
+    /**
+     * 分页查询分类
+     * @param dto
+     * @return
+     */
     public PageResult pageQuery(CategoryPageQueryDTO dto) {
         Page<Category> page = new Page<>(dto.getPage(), dto.getPageSize());
         LambdaQueryWrapper<Category> queryWrapper = new LambdaQueryWrapper<>();
@@ -42,12 +51,20 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         return new PageResult(page.getTotal(), page.getRecords());
     }
 
+    /**
+     * 修改分类
+     * @param categoryDTO
+     */
     public void updateCategory(CategoryDTO categoryDTO) {
         Category category = new Category();
         BeanUtils.copyProperties(categoryDTO, category);
         categoryMapper.updateById(category);
     }
 
+    /**
+     * 批量删除分类
+     * @param ids
+     */
     @Transactional
     public void deleteBatch(List<Integer> ids) {
         if (ids == null || ids.isEmpty()) {

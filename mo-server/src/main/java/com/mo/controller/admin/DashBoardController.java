@@ -1,13 +1,17 @@
 package com.mo.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckRole;
+import com.mo.entity.CommentNotice;
 import com.mo.result.Result;
 import com.mo.service.DashBoardService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin/dashboard")
@@ -32,13 +36,31 @@ public class DashBoardController {
      * 获取今天阅读量
      * @return
      */
-    // TODO 获取今天阅读量
     @GetMapping("/today")
     public Result getTodayView() {
-        dashBoardService.todayView();
-        return Result.success();
+        Long todayView = dashBoardService.todayView();
+        return Result.success(todayView);
     }
 
-    // TODO 获取文章新评论（ws）
+    /**
+     * 获取未读评论
+     * @return
+     */
+    @GetMapping("/unread")
+    public Result getUnreadComment() {
+        List<CommentNotice> commentNotices = dashBoardService.unreadComment();
+        return Result.success(commentNotices);
+    }
+
+    /**
+     * 标记已读评论
+     * @param commentId
+     * @return
+     */
+    @DeleteMapping("/read/{commentId}")
+    public Result readComment(Integer commentId) {
+        dashBoardService.deleteNotice(commentId);
+        return Result.success();
+    }
 
 }

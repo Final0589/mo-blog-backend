@@ -1,5 +1,6 @@
 package com.mo.controller.user;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.stp.StpUtil;
 import com.mo.entity.User;
@@ -15,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/user/avatar")
-@SaCheckRole("user")
+@SaCheckLogin
 public class AvatarController {
 
     @Autowired

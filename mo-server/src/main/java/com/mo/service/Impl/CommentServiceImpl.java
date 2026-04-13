@@ -7,7 +7,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mo.dto.CommentDTO;
 import com.mo.dto.CommentPageQueryDTO;
 import com.mo.entity.Comment;
+import com.mo.entity.CommentNotice;
 import com.mo.mapper.CommentMapper;
+import com.mo.mapper.CommentNoticeMapper;
 import com.mo.result.PageResult;
 import com.mo.service.CommentService;
 import org.springframework.beans.BeanUtils;
@@ -24,6 +26,13 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     @Autowired
     private CommentMapper commentMapper;
 
+    @Autowired
+    private CommentNoticeMapper commentNoticeMapper;
+
+    /**
+     * 发布评论
+     * @param commentDTO
+     */
     public void publishComment(CommentDTO commentDTO) {
         Comment comment = new Comment();
         BeanUtils.copyProperties(commentDTO, comment);
@@ -34,8 +43,16 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         }
         
         this.save(comment);
+
+        // 存入管理员未读
+        commentNoticeMapper.insert(new CommentNotice(comment.getId()));
     }
 
+    /**
+     * 分页查询评论
+     * @param dto
+     * @return
+     */
     public PageResult pageQuery(CommentPageQueryDTO dto) {
         Page<Comment> page = new Page<>(dto.getPage(), dto.getPageSize());
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
@@ -50,6 +67,10 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         return new PageResult(page.getTotal(), page.getRecords());
     }
 
+    /**
+     * 删除评论
+     * @param id
+     */
     @Transactional
     public void delete(Integer id) {
         commentMapper.deleteById(id);
@@ -59,4 +80,5 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         queryWrapper.eq(Comment::getParentId, id);
         commentMapper.delete(queryWrapper);
     }
+
 }
