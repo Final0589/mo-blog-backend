@@ -55,7 +55,7 @@ public interface ArticleService extends IService<Article> {
     /**
      * 文章阅读量统计
      * @param articleId
-     * @return
+     * @param key
      */
-    void click(Integer articleId);
+    void click(Integer articleId, String key);
 }

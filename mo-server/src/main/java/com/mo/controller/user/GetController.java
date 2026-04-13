@@ -9,8 +9,11 @@ import com.mo.result.Result;
 import com.mo.service.ArticleService;
 import com.mo.service.CategoryService;
 import com.mo.service.TagService;
+import com.mo.utils.IpUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,6 +29,8 @@ public class GetController {
 
     @Autowired
     private TagService tagService;
+    @Autowired
+    private RedisTemplate<Object, Object> redisTemplate;
 
     /**
      * 获取文章分类列表（分页）
@@ -77,10 +82,9 @@ public class GetController {
      * @return
      */
     @PostMapping("/article/click/{articleId}")
-    public Result viewCount(@PathVariable Integer articleId) {
-        // 将IP地址计入Redis缓存，并判断是否超过一定上限
-
-        articleService.click(articleId);
+    public Result viewCount(@PathVariable Integer articleId, HttpServletRequest request) {
+        String key = "blog:limit:ip:" + IpUtils.getIpAddr(request);
+        articleService.click(articleId, key);
         return Result.success();
     }
 

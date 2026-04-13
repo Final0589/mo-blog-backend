@@ -13,9 +13,11 @@ import com.mo.entity.ArticleTag;
 import com.mo.result.PageResult;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
@@ -25,6 +27,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Autowired
     private ArticleMapper articleMapper;
+
+    @Autowired
+    private RedisTemplate<Object, Object> redisTemplate;
 
     /**
      * 上传文章
@@ -116,12 +121,28 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     /**
-     * 文章阅读量统计
+     * Redis文章阅读量统计
      * @param articleId
-     * @return
+     * @param key
      */
-    public void click(Integer articleId) {
-        // TODO 存储到Redis缓存中，分别是今日阅读量和文章阅读量
+    public void click(Integer articleId, String key) {
+        // 将IP地址计入Redis缓存，并判断是否超过一定上限
+        // 自增IP的访问次数
+        Long count = redisTemplate.opsForValue().increment(key);
+
+        // 设置过期时间
+        if (count != null && count == 1) {
+            redisTemplate.expire(key, 30, TimeUnit.MINUTES);
+        }
+
+        // 是否超过上限
+        Integer limit = 30;
+        if (count != null && count > limit) {
+            return;
+        }
+
+        redisTemplate.opsForValue().increment("blog:today_view");
+        redisTemplate.opsForHash().increment("blog:article_view", articleId, 1);
     }
 
 }
