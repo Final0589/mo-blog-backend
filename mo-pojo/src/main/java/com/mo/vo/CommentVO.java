@@ -11,7 +11,9 @@ public class CommentVO {
     private Integer id;
     private String content;
     private String nickname;
+    private String avatar;
     private LocalDateTime createTime;
     private Integer parentId;
+    private String targetNickname;
     private List<CommentVO> children = new ArrayList<>();
 }

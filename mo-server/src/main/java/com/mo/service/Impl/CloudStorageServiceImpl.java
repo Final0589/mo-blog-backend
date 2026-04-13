@@ -23,7 +23,7 @@ public class CloudStorageServiceImpl implements StorageService {
     @Value("${blog.storage.cloud.upload-url}")
     private String uploadUrl;
 
-    @Value("${blog.storage.cloud.filebodyname}")
+    @Value("${blog.storage.cloud.file-body-name}")
     private String fileBodyName;
 
     private final RestTemplate restTemplate = new RestTemplate();

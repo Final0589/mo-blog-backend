@@ -2,6 +2,7 @@ package com.mo.controller.user;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.stp.StpUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.mo.dto.CommentDTO;
 import com.mo.dto.CommentPageQueryDTO;
 import com.mo.entity.Comment;
@@ -9,6 +10,7 @@ import com.mo.mapper.CommentMapper;
 import com.mo.result.PageResult;
 import com.mo.result.Result;
 import com.mo.service.CommentService;
+import com.mo.vo.CommentVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -47,21 +49,18 @@ public class CommentController {
     }
 
     /**
-     * 根据文章ID分页查询评论
+     * 根据文章ID查询评论
      * @param articleId
-     * @param page
-     * @param pageSize
+     * @param current
+     * @param size
      * @return
      */
     @GetMapping("/{articleId}")
-    public Result page(@PathVariable Integer articleId, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize) {
-        CommentPageQueryDTO commentPageQueryDTO = new CommentPageQueryDTO();
-        commentPageQueryDTO.setArticleId(articleId);
-        commentPageQueryDTO.setPage(page);
-        commentPageQueryDTO.setPageSize(pageSize);
-
-        PageResult pageResult = commentService.pageQuery(commentPageQueryDTO);
-        return Result.success(pageResult);
+    public Result<Page<CommentVO>> getComments(@PathVariable Integer articleId,
+                                               @RequestParam(defaultValue = "1") int current,
+                                               @RequestParam(defaultValue = "10") int size) {
+        Page<CommentVO> commentTree = commentService.getCommentTree(articleId, current, size);
+        return Result.success(commentTree);
     }
 
     /**

@@ -15,6 +15,6 @@ public class Article {
     private String summary;
     private Integer categoryId;
     private Integer status;
-    private Integer view_count;
+    private Integer viewCount;
     private String updateTime;
 }

@@ -1,7 +1,5 @@
 package com.mo.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.mo.dto.UserDTO;
 import com.mo.dto.UserPageQueryDTO;
 import com.mo.entity.User;
 import com.mo.result.PageResult;
@@ -9,25 +7,6 @@ import com.mo.result.PageResult;
 import java.util.List;
 
 public interface UserService {
-
-    /**
-     * 通过用户名称查找账号
-     * @param eq
-     * @return
-     */
-    User getById(LambdaQueryWrapper<User> eq);
-
-    /**
-     * 创建用户
-     * @param userDTO
-     */
-    void createUser(UserDTO userDTO);
-
-    /**
-     * 修改用户
-     * @param userDTO
-     */
-    void updateUser(UserDTO userDTO);
 
     /**
      * 批量删除账号
@@ -41,4 +20,18 @@ public interface UserService {
      * @return
      */
     PageResult pageQuery(UserPageQueryDTO userPageQueryDTO);
+
+    /**
+     * Github Oauth登录
+     * @param code
+     * @return
+     */
+    User oauth(String code);
+
+    /**
+     * 设置用户状态
+     * @param id
+     * @param status
+     */
+    void setStatus(Integer id, Integer status);
 }

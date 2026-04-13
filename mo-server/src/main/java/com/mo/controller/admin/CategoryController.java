@@ -49,7 +49,7 @@ public class CategoryController {
      * @param categoryDTO
      * @return
      */
-    @PutMapping("update")
+    @PutMapping("/update")
     public Result updateCategory(@RequestBody CategoryDTO categoryDTO) {
         log.info("修改分类：{}", categoryDTO);
         categoryService.updateCategory(categoryDTO);
