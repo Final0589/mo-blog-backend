@@ -27,7 +27,7 @@ public class TagController {
      * @return
      */
     @PostMapping("/create")
-    public Result uploadTag(TagDTO tagDTO) {
+    public Result createTag(TagDTO tagDTO) {
         log.info("创建标签中：{}", tagDTO.getName());
         tagService.createTag(tagDTO);
         return Result.success();

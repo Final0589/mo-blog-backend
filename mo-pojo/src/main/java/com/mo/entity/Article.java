@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @TableName("article")
 public class Article {
@@ -16,5 +18,5 @@ public class Article {
     private Integer categoryId;
     private Integer status;
     private Integer viewCount;
-    private String updateTime;
+    private String createTime;
 }

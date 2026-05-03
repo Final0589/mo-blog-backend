@@ -89,7 +89,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 
         // 删除文章与标签关联表中的对应数据
         LambdaQueryWrapper<ArticleTag> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.in(ArticleTag::getTag_id, ids);
+        queryWrapper.in(ArticleTag::getTagId, ids);
         articleTagMapper.delete(queryWrapper);
     }
 

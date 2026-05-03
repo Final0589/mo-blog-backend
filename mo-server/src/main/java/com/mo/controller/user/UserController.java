@@ -20,7 +20,7 @@ public class UserController {
     private UserService userService;
 
     /**
-     * 返回用户的OAuth的Code并登录
+     * 用户登录
      * @param code
      * @return
      */

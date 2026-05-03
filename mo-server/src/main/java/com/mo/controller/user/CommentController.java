@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController("userCommentController")
 @RequestMapping("/user/comment")
 @Slf4j
-@SaCheckLogin
 public class CommentController {
 
     @Autowired
@@ -32,6 +31,7 @@ public class CommentController {
      * @return
      */
     @PostMapping("/publish")
+    @SaCheckLogin
     public Result publishComment(@RequestBody CommentDTO commentDTO) {
         commentService.publishComment(commentDTO);
         return Result.success();
@@ -43,6 +43,7 @@ public class CommentController {
      * @return
      */
     @PostMapping("/reply")
+    @SaCheckLogin
     public Result replyComment(@RequestBody CommentDTO commentDTO) {
         commentService.publishComment(commentDTO);
         return Result.success();
@@ -65,9 +66,11 @@ public class CommentController {
 
     /**
      * 删除自己发布的评论
+     * @param commentId
      * @return
      */
     @DeleteMapping("/delete/{commentId}")
+    @SaCheckLogin
     public Result delete(@PathVariable Integer commentId) {
         // 先查询该评论是否为当前用户发送，不是则无法删除
         Comment comment = commentMapper.selectById(commentId);

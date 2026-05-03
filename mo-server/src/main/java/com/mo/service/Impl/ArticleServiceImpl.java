@@ -3,8 +3,10 @@ package com.mo.service.Impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mo.dto.TagDTO;
 import com.mo.mapper.ArticleMapper;
 import com.mo.mapper.ArticleTagMapper;
+import com.mo.mapper.TagMapper;
 import com.mo.service.ArticleService;
 import com.mo.dto.ArticleDTO;
 import com.mo.dto.ArticlePageQueryDTO;
@@ -31,6 +33,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    @Autowired
+    private TagMapper tagMapper;
+
     /**
      * 上传文章
      * @param articleDTO
@@ -47,8 +52,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         if (tagIds != null && !tagIds.isEmpty()) {
             for (Integer tagId : tagIds) {
                 ArticleTag at = new ArticleTag();
-                at.setArticle_id(article.getId());
-                at.setTag_id(tagId);
+                at.setArticleId(article.getId());
+                at.setTagId(tagId);
                 articleTagMapper.insert(at);
             }
         }
@@ -66,14 +71,51 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
         // 构建查询条件 (Wrapper)
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
+        // 只查询 id、title、summary 字段
+        queryWrapper.select(Article::getCreateTime,Article::getViewCount ,Article::getCategoryId, Article::getStatus, Article::getId,
+                Article::getTitle, Article::getSummary);
         // 模糊查询
         queryWrapper.like(dto.getName() != null, Article::getTitle, dto.getName());
+        queryWrapper.eq(dto.getCategoryId() != null, Article::getCategoryId, dto.getCategoryId());
+        queryWrapper.eq(dto.getStatus() != null, Article::getStatus, dto.getStatus());
+        // 从 article_tag 表中获取文章ID（同时具有多个标签的文章）
+        if (dto.getTagIds() != null && !dto.getTagIds().isEmpty()) {
+            // 查询每个标签对应的所有文章ID
+            List<Integer> articleIds = null;
+            for (Integer tagId : dto.getTagIds()) {
+                LambdaQueryWrapper<ArticleTag> tagWrapper = new LambdaQueryWrapper<>();
+                tagWrapper.eq(ArticleTag::getTagId, tagId);
+                tagWrapper.select(ArticleTag::getArticleId);
+                List<Object> currentArticleIds = articleTagMapper.selectObjs(tagWrapper);
+                if (currentArticleIds.isEmpty()) {
+                    articleIds = new java.util.ArrayList<>();
+                    break;
+                }
+                if (articleIds == null) {
+                    articleIds = new java.util.ArrayList<>();
+                    for (Object obj : currentArticleIds) {
+                        articleIds.add((Integer) obj);
+                    }
+                } else {
+                    articleIds.retainAll(currentArticleIds);
+                }
+            }
+            if (articleIds != null && !articleIds.isEmpty()) {
+                queryWrapper.in(Article::getId, articleIds);
+            } else {
+                queryWrapper.eq(Article::getId, -1);
+            }
+        }
+
         // 排序
-        queryWrapper.orderByDesc(Article::getUpdateTime);
+        queryWrapper.orderByDesc(Article::getId);
 
         // 执行分页查询
         // 核心点：执行完后，查询到的列表和总记录数都会自动塞进 page 对象里
         articleMapper.selectPage(page, queryWrapper);
+
+        // TODO 搜索文章对应的标签
+
 
         return new PageResult(page.getTotal(), page.getRecords());
     }
@@ -113,7 +155,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     /**
      * 根据ID获取文章
-     * @param id
+     * @param id    
      * @return
      */
     public Article getById(Integer id) {

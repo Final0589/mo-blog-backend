@@ -70,7 +70,7 @@ public class ArticleController {
      * @param status
      * @return
      */
-    @PutMapping("/{status}")
+    @PutMapping("/status/{status}")
     public Result setStatus(Integer articleId,@PathVariable Integer status) {
         articleService.setStatus(articleId, status);
         return Result.success();

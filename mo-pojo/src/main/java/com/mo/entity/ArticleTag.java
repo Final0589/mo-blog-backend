@@ -10,6 +10,6 @@ import lombok.Data;
 public class ArticleTag {
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private Integer tag_id;
-    private Integer article_id;
+    private Integer tagId;
+    private Integer articleId;
 }
