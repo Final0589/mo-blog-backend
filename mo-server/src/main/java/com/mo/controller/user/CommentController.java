@@ -7,9 +7,11 @@ import com.mo.dto.CommentDTO;
 import com.mo.dto.CommentPageQueryDTO;
 import com.mo.entity.Comment;
 import com.mo.mapper.CommentMapper;
+import com.mo.mapper.UserMapper;
 import com.mo.result.PageResult;
 import com.mo.result.Result;
 import com.mo.service.CommentService;
+import com.mo.service.UserService;
 import com.mo.vo.CommentVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ public class CommentController {
     private CommentService commentService;
     @Autowired
     private CommentMapper commentMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     /**
      * 发表评论
@@ -74,11 +78,12 @@ public class CommentController {
     public Result delete(@PathVariable Integer commentId) {
         // 先查询该评论是否为当前用户发送，不是则无法删除
         Comment comment = commentMapper.selectById(commentId);
-        if (StpUtil.getLoginId().equals(comment.getUserId())) {
+        System.out.println(StpUtil.getLoginId());
+        if (StpUtil.getLoginIdAsInt() == comment.getUserId() | userMapper.selectById(StpUtil.getLoginIdAsInt()).getPermission() == 1) {
             commentService.delete(commentId);
             return Result.success();
         } else {
-            return Result.error("无法删除别人的评论");
+            return Result.error("无法删除别人的评论", 403);
         }
     }
 

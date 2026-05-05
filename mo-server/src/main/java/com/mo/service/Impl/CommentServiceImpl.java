@@ -44,7 +44,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     public void publishComment(CommentDTO commentDTO) {
         Comment comment = new Comment();
         BeanUtils.copyProperties(commentDTO, comment);
-        comment.setUserId((Integer) StpUtil.getLoginId());
+        comment.setUserId(StpUtil.getLoginIdAsInt());
 
         if (comment.getCreateTime() == null) {
             comment.setCreateTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
@@ -108,33 +108,56 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
         List<Comment> roots = page.getRecords();
         if (roots.isEmpty()) return new Page<>(current, size, 0);
 
-        // 找到本页所有主评论的ID集合
-        List<Integer> rootIds = roots.stream().map(Comment::getId).collect(Collectors.toList());
-
-        // 查询父评论下的所有子评论
-        LambdaQueryWrapper<Comment> childWrapper = new LambdaQueryWrapper<>();
-        childWrapper.eq(Comment::getArticleId, articleId)
-                .in(Comment::getParentId, rootIds)
+        // 查询文章的所有评论（包括所有层级的子评论）
+        LambdaQueryWrapper<Comment> allWrapper = new LambdaQueryWrapper<>();
+        allWrapper.eq(Comment::getArticleId, articleId)
                 .orderByAsc(Comment::getCreateTime);
-        List<Comment> allChildren = commentMapper.selectList(childWrapper);
+        List<Comment> allComments = commentMapper.selectList(allWrapper);
 
-        // 转换并分组
-        List<CommentVO> rootVOs = convertToVOList(roots);
-        List<CommentVO> childVOs = convertToVOList(allChildren);
+        // 转换所有评论为VO
+        List<CommentVO> allVOs = convertToVOList(allComments);
 
-        // 将子评论按parentId分组：Map<ParentId, List<ChildVO>>
-        Map<Integer, List<CommentVO>> childrenGroup = childVOs.stream()
+        // 将所有评论按parentId分组：Map<ParentId, List<ChildVO>>
+        // 过滤掉parentId为null的评论（顶级评论不需要作为子评论被分组）
+        Map<Integer, List<CommentVO>> childrenGroup = allVOs.stream()
+                .filter(vo -> vo.getParentId() != null && vo.getParentId() != 0)
                 .collect(Collectors.groupingBy(CommentVO::getParentId));
 
-        // 子评论列表插入对应的根评论
+        // 获取本页的顶级评论VO
+        List<CommentVO> rootVOs = allVOs.stream()
+                .filter(vo -> vo.getParentId() == null || vo.getParentId() == 0)
+                .skip((long) (current - 1) * size)
+                .limit(size)
+                .collect(Collectors.toList());
+
+        // 递归构建树形结构
         for (CommentVO root : rootVOs) {
-            List<CommentVO> children = childrenGroup.get(root.getId());
-            root.setChildren(children != null ? children : new ArrayList<>());
+            buildCommentTree(root, childrenGroup);
         }
 
         Page<CommentVO> resultPage = new Page<>(current, size, page.getTotal());
         resultPage.setRecords(rootVOs);
         return resultPage;
+    }
+
+    /**
+     * 递归构建评论树
+     * @param parent 父评论
+     * @param childrenGroup 所有评论按parentId分组的Map
+     */
+    private void buildCommentTree(CommentVO parent, Map<Integer, List<CommentVO>> childrenGroup) {
+        List<CommentVO> children = childrenGroup.get(parent.getId());
+        if (children == null || children.isEmpty()) {
+            parent.setChildren(new ArrayList<>());
+            return;
+        }
+        
+        parent.setChildren(children);
+        
+        // 递归处理每个子评论
+        for (CommentVO child : children) {
+            buildCommentTree(child, childrenGroup);
+        }
     }
 
     /**

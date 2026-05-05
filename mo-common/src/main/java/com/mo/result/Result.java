@@ -19,9 +19,10 @@ public class Result<T> {
         return success(null);
     }
 
-    public static Result error(String msg) {
+    public static Result error(String msg, Integer code) {
         Result result = new Result<>();
-        result.code = 0;
+        if (code == null) result.code = 0;
+        else result.code = code;
         result.msg = msg;
         return result;
     }

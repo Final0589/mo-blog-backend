@@ -30,10 +30,10 @@ public class UserController {
         User user = userService.oauth(code);
 
         // 用户登录
-        if (user == null) { return Result.error("登录失败"); }
+        if (user == null) { return Result.error("登录失败", 500); }
         StpUtil.login(user.getId());
 
-        if (user.getStatus() == 1) { return Result.error("账号已被封禁"); }
+        if (user.getStatus() == 1) { return Result.error("账号已被封禁", 403); }
 
         // 返回词元（笑）
         Map<String, Object> data = new HashMap<>();
@@ -41,6 +41,7 @@ public class UserController {
         data.put("permission", user.getPermission());
         data.put("nickname", user.getNickname());
         data.put("avatar", user.getAvatar());
+        data.put("userId", user.getId());
 
         return Result.success(data);
     }
