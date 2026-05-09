@@ -27,7 +27,7 @@ public class TagController {
      * @return
      */
     @PostMapping("/create")
-    public Result createTag(TagDTO tagDTO) {
+    public Result createTag(@RequestBody TagDTO tagDTO) {
         log.info("创建标签中：{}", tagDTO.getName());
         tagService.createTag(tagDTO);
         return Result.success();
@@ -49,7 +49,7 @@ public class TagController {
      * @return
      */
     @PutMapping("/update")
-    public Result update(TagDTO tagDTO) {
+    public Result update(@RequestBody TagDTO tagDTO) {
         tagService.updateTag(tagDTO);
         return Result.success();
     }

@@ -27,7 +27,7 @@ public class ArticleController {
      * @return
      */
     @PostMapping("/publish")
-    public Result uploadArticle(ArticleDTO articleDTO) {
+    public Result uploadArticle(@RequestBody ArticleDTO articleDTO) {
         log.info("保存文章中：{}", articleDTO.getTitle());
         articleService.publishArticle(articleDTO);
         return Result.success();
@@ -49,7 +49,7 @@ public class ArticleController {
      * @return
      */
     @PutMapping("/update")
-    public Result update(ArticleDTO articleDTO) {
+    public Result update(@RequestBody ArticleDTO articleDTO) {
         articleService.updateArticle(articleDTO);
         return Result.success();
     }

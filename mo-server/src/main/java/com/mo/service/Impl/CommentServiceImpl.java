@@ -90,6 +90,38 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     }
 
     /**
+     * 删除指定用户的所有评论
+     * @param userId 用户ID
+     */
+    @Transactional
+    public void deleteByUserId(Integer userId) {
+        // 查询该用户的所有评论
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Comment::getUserId, userId);
+        List<Comment> comments = commentMapper.selectList(queryWrapper);
+        
+        if (comments.isEmpty()) {
+            return;
+        }
+        
+        // 收集所有评论ID
+        List<Integer> commentIds = comments.stream().map(Comment::getId).collect(Collectors.toList());
+        
+        // 删除所有评论通知
+        LambdaQueryWrapper<CommentNotice> noticeWrapper = new LambdaQueryWrapper<>();
+        noticeWrapper.in(CommentNotice::getCommentId, commentIds);
+        commentNoticeMapper.delete(noticeWrapper);
+        
+        // 删除所有子评论（回复该用户评论的评论）
+        LambdaQueryWrapper<Comment> childWrapper = new LambdaQueryWrapper<>();
+        childWrapper.in(Comment::getParentId, commentIds);
+        commentMapper.delete(childWrapper);
+        
+        // 删除该用户的所有评论
+        commentMapper.deleteBatchIds(commentIds);
+    }
+
+    /**
      * 获取评论树，包含父子评论
      * @param articleId
      * @param current

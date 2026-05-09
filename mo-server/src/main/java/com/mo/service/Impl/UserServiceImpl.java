@@ -6,11 +6,13 @@ import com.mo.dto.UserPageQueryDTO;
 import com.mo.entity.User;
 import com.mo.mapper.UserMapper;
 import com.mo.result.PageResult;
+import com.mo.service.CommentService;
 import com.mo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -25,6 +27,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private CommentService commentService;
 
     @Value("${blog.github-oauth.client-id}")
     private String clientId;
@@ -42,7 +47,18 @@ public class UserServiceImpl implements UserService {
      * 批量删除账号
      * @param ids
      */
+    @Transactional
     public void deleteBatch(List<Integer> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return;
+        }
+        
+        // 删除每个用户的所有评论
+        for (Integer userId : ids) {
+            commentService.deleteByUserId(userId);
+        }
+        
+        // 删除用户
         userMapper.deleteBatchIds(ids);
     }
 

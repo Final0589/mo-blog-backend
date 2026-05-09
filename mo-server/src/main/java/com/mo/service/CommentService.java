@@ -39,4 +39,10 @@ public interface CommentService extends IService<Comment> {
      * @return
      */
     Page<CommentVO> getCommentTree(Integer articleId, int current, int size);
+
+    /**
+     * 删除指定用户的所有评论
+     * @param userId 用户ID
+     */
+    void deleteByUserId(Integer userId);
 }

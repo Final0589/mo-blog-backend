@@ -28,7 +28,7 @@ public class DashBoardController {
      */
     @GetMapping("/totalview")
     public Result getTotalView() {
-        Long total = dashBoardService.total();
+        Integer total = dashBoardService.total();
         return Result.success(total);
     }
 
@@ -38,7 +38,7 @@ public class DashBoardController {
      */
     @GetMapping("/today")
     public Result getTodayView() {
-        Long todayView = dashBoardService.todayView();
+        Integer todayView = dashBoardService.todayView();
         return Result.success(todayView);
     }
 

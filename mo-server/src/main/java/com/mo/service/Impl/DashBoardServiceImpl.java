@@ -26,17 +26,18 @@ public class DashBoardServiceImpl implements DashBoardService {
      * 获取总文章阅读量
      * @return
      */
-    public Long total() {
+    public Integer total() {
         // 查找Article的view列
-        return dashBoardMapper.total();
+        return dashBoardMapper.total().intValue();
     }
 
     /**
      * 获取今天阅读量
      * @return
      */
-    public Long todayView() {
-        return (Long) redisTemplate.opsForValue().get("blog:today_view");
+    public Integer todayView() {
+        Object view = redisTemplate.opsForValue().get("blog:today_view");
+        return (Integer) view;
     }
 
     /**
@@ -52,7 +53,7 @@ public class DashBoardServiceImpl implements DashBoardService {
      * @param commentId
      */
     public void deleteNotice(Integer commentId) {
-        commentNoticeMapper.deleteById(commentId);
+        commentNoticeMapper.deleteByCommentId(commentId);
     }
 
 }
