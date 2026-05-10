@@ -6,6 +6,7 @@ import com.mo.service.StorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,6 +38,18 @@ public class UploadController {
     }
 
     /**
+     * 上传到本地（带文件夹名称）
+     * @param file 文件
+     * @param folderName 文件夹名称
+     * @return
+     */
+    @PostMapping("/local/{folderName}")
+    public Result<String> uploadToLocalWithFolderName(MultipartFile file, @PathVariable String folderName) {
+        String filepath = localStorageService.upload(file, folderName);
+        return Result.success(filepath);
+    }
+
+    /**
      * 上传到云端
      * @param file
      * @return
@@ -44,6 +57,18 @@ public class UploadController {
     @PostMapping("/cloud")
     public Result<String> uploadToOSS(MultipartFile file) {
         String filepath = cloudStorageService.upload(file);
+        return Result.success(filepath);
+    }
+
+    /**
+     * 上传到云端（带文件夹名称）
+     * @param file 文件
+     * @param folderName 文件夹名称
+     * @return
+     */
+    @PostMapping("/cloud/{folderName}")
+    public Result<String> uploadToOSSWithFolderName(MultipartFile file, @PathVariable String folderName) {
+        String filepath = cloudStorageService.upload(file, folderName);
         return Result.success(filepath);
     }
 

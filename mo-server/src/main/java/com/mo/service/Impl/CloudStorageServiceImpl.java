@@ -33,6 +33,16 @@ public class CloudStorageServiceImpl implements StorageService {
      * @return
      */
     public String upload(MultipartFile file) {
+        return upload(file, null);
+    }
+
+    /**
+     * 上传到云端（带文件夹名称）
+     * @param file 文件
+     * @param folderName 文件夹名称（云端存储不需要创建文件夹）
+     * @return
+     */
+    public String upload(MultipartFile file, String folderName) {
         // 构造头
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);

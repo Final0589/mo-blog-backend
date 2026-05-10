@@ -6,6 +6,7 @@ import java.util.List;
 
 @Data
 public class ArticleDTO {
+    private Integer id;
     private String title;
     private String summary;
     private String content; // Markdown 源码

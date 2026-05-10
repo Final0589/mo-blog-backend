@@ -58,7 +58,7 @@ public class TagController {
      * @param ids
      */
     @DeleteMapping("/delete")
-    public Result delete(List<Integer> ids) {
+    public Result delete(@RequestParam List<Integer> ids) {
         tagService.deleteBatch(ids);
         return Result.success();
     }

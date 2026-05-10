@@ -48,8 +48,8 @@ public class UserController {
      * @param status
      * @return
      */
-    @PutMapping("/status/{status}")
-    public Result setStatus(Integer id, @PathVariable Integer status) {
+    @PutMapping("/{id}/status/{status}")
+    public Result setStatus(@PathVariable Integer id, @PathVariable Integer status) {
         userService.setStatus(id, status);
         return Result.success();
     }

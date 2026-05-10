@@ -59,7 +59,7 @@ public class ArticleController {
      * @param ids
      */
     @DeleteMapping("delete")
-    public Result delete(List<Integer> ids) {
+    public Result delete(@RequestParam List<Integer> ids) {
         articleService.deleteBatch(ids);
         return Result.success();
     }

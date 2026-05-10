@@ -18,8 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements ArticleService {
@@ -114,8 +117,32 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         // 核心点：执行完后，查询到的列表和总记录数都会自动塞进 page 对象里
         articleMapper.selectPage(page, queryWrapper);
 
-        // TODO 搜索文章对应的标签
-
+        // 查询文章对应的标签
+        List<Article> articles = page.getRecords();
+        
+        if (!articles.isEmpty()) {
+            // 获取所有文章ID
+            List<Integer> articleIds = articles.stream()
+                    .map(Article::getId)
+                    .collect(Collectors.toList());
+            
+            // 批量查询文章标签关联
+            LambdaQueryWrapper<ArticleTag> tagWrapper = new LambdaQueryWrapper<>();
+            tagWrapper.in(ArticleTag::getArticleId, articleIds);
+            List<ArticleTag> articleTags = articleTagMapper.selectList(tagWrapper);
+            
+            // 按文章ID分组标签ID
+            Map<Integer, List<Integer>> articleTagMap = articleTags.stream()
+                    .collect(Collectors.groupingBy(
+                            ArticleTag::getArticleId,
+                            Collectors.mapping(ArticleTag::getTagId, Collectors.toList())
+                    ));
+            
+            // 填充每篇文章的tagIdList
+            for (Article article : articles) {
+                article.setTagIdList(articleTagMap.getOrDefault(article.getId(), new ArrayList<>()));
+            }
+        }
 
         return new PageResult(page.getTotal(), page.getRecords());
     }
@@ -131,6 +158,25 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         BeanUtils.copyProperties(articleDTO, article);
 
         articleMapper.updateById(article);
+
+        // 处理标签关联
+        List<Integer> tagIds = articleDTO.getTagIds();
+        if (tagIds != null) {
+            // 删除旧的标签关联
+            LambdaQueryWrapper<ArticleTag> deleteWrapper = new LambdaQueryWrapper<>();
+            deleteWrapper.eq(ArticleTag::getArticleId, article.getId());
+            articleTagMapper.delete(deleteWrapper);
+
+            // 插入新的标签关联
+            if (!tagIds.isEmpty()) {
+                for (Integer tagId : tagIds) {
+                    ArticleTag at = new ArticleTag();
+                    at.setArticleId(article.getId());
+                    at.setTagId(tagId);
+                    articleTagMapper.insert(at);
+                }
+            }
+        }
     }
 
     /**
